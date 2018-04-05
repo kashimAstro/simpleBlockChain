@@ -15,10 +15,10 @@ class Block {
  public:
     string sHash;
     string sPrevHash;    
-    uint32_t _nIndex;
-    uint32_t _nNonce;
-    string _sData;
-    time_t _tTime;
+    uint32_t index;
+    uint32_t nonce;
+    time_t timer;
+    string data;
     
     void write_file(const std::string& name, const std::string& content, bool append = false) {
        std::ofstream outfile;
@@ -30,10 +30,10 @@ class Block {
        outfile.close();
     }
     
-    Block(uint32_t nIndexIn, const string &sDataIn) : _nIndex(nIndexIn), _sData(sDataIn)
+    Block(uint32_t nIndexIn, const string &sDataIn) : index(nIndexIn), data(sDataIn)
     {
-       _nNonce = 0;
-       _tTime = time(nullptr);
+       nonce = 0;
+       timer = time(nullptr);
        sHash = calculate_hash();
     }
 
@@ -46,7 +46,7 @@ class Block {
        cstr[nDifficulty] = '\0';
        string str(cstr);
        while (sHash.substr(0, nDifficulty) != str) {
-          _nNonce++;
+          nonce++;
           sHash = calculate_hash();
        }
        cout << "Block mined: " << sHash << " difficult: " << nDifficulty << endl;
@@ -57,7 +57,7 @@ class Block {
     inline string calculate_hash() const
     {
        stringstream ss;
-       ss << _nIndex << sPrevHash << _tTime << _sData << _nNonce;
+       ss << index << sPrevHash << timer << data << nonce;
        return sha256(ss.str());
     }
 };
